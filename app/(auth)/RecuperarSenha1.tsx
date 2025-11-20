@@ -6,7 +6,7 @@ const { width, height } = Dimensions.get('window');
 
 const primaryColor = '#550D08'; 
 const placeholderColor = '#666666'; 
-const logoSource = require('../assets/images/LogoSirene.png');
+const logoSource = require('../../assets/images/LogoSirene.png');
 
 
 const InputIntegrado: React.FC<{ label: string, value: string, onChangeText: (text: string) => void, keyboardType?: 'numeric' | 'default', secureTextEntry?: boolean }> = ({ label, value, onChangeText, keyboardType = 'default', secureTextEntry = false }) => (

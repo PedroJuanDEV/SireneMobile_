@@ -7,7 +7,7 @@ const { height } = Dimensions.get('window');
 const primaryColor = '#550D08'; 
 // Ajustando o caminho da imagem, se necessário. Se o arquivo está em 'app/', 
 // o caminho para 'assets/images' na raiz é '..'.
-const logoSource = require('../assets/images/LogoSirene.png'); 
+const logoSource = require('../../assets/images/LogoSirene.png');
 
 const LoadingDots = () => {
   const dotAnims = useRef([

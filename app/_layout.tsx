@@ -5,34 +5,22 @@ import React from 'react';
 
 export default function RootLayout() {
   return (
-    <Stack 
-      // 🎯 DEFININDO A TELA INICIAL:
-      initialRouteName="Carregamento" 
+    <Stack screenOptions={{ headerShown: false }}>
       
-      screenOptions={{ headerShown: false }}
-    >
-      {/* 1. Carregamento.tsx - Esta será a primeira tela a ser exibida */}
+      {/* 1. GRUPO DE AUTENTICAÇÃO (Onde o App deve começar) */}
       <Stack.Screen 
-        name="Carregamento" 
-        options={{ title: 'Carregando' }}
+        name="(auth)" 
+        options={{ 
+            title: 'Autenticação',
+            // A primeira rota dentro de (auth) será 'Carregamento'
+            initialRouteName: 'Carregamento'
+        }}
       />
       
-      {/* 2. Login.tsx */}
+      {/* 2. GRUPO PRINCIPAL COM TABS (Onde o Login leva) */}
       <Stack.Screen 
-        name="Login" 
-        options={{ title: 'Login' }}
-      />
-      
-      {/* 3. RecuperarSenha1.tsx */}
-      <Stack.Screen 
-        name="RecuperarSenha1" 
-        options={{ title: 'Recuperar Senha - Etapa 1' }}
-      />
-      
-      {/* 4. RecuperarSenha2.tsx */}
-      <Stack.Screen 
-        name="RecuperarSenha2" 
-        options={{ title: 'Recuperar Senha - Etapa 2' }}
+        name="(tabs)" 
+        options={{ title: 'Principal' }}
       />
       
     </Stack>

@@ -1,4 +1,4 @@
-import { useRouter } from 'expo-router'; // Usando o hook useRouter
+import { useRouter } from 'expo-router';
 import React from 'react';
 import { Dimensions, Image, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 
@@ -7,12 +7,18 @@ const { width, height } = Dimensions.get('window');
 const primaryColor = '#550D08'; 
 const placeholderColor = '#666666'; 
 
-// Certifique-se de que este caminho está correto:
-const logoSource = require('../assets/images/LogoSirene.png');
+const logoSource = require('../../assets/images/LogoSirene.png');
 
 const LoginScreen = () => {
     
     const router = useRouter(); 
+    
+    const handleLogin = () => {
+        // Navegação explícita para o arquivo Inicial dentro do grupo (tabs)
+        // Isso resolve o erro 'Unmatched Route' forçando o carregamento da tela correta.
+        router.replace('/(tabs)/Inicial'); 
+        console.log('Login bem-sucedido. Redirecionando para a Página Inicial.');
+    };
     
     const handleForgotPassword = () => {
         router.push('RecuperarSenha1'); 
@@ -35,9 +41,7 @@ const LoginScreen = () => {
                 <Text style={styles.title}>LOGIN</Text>
                 
                 
-                {/* 🎯 Input CPF/Matrícula */}
                 <View style={styles.inputGroup}>
-                    {/* Rótulo Flutuante (Posicionado absolutamente) */}
                     <Text style={[styles.inputLabel, styles.floatingLabel]}>CPF/Matrícula</Text>
                     <View style={styles.boxInput}>
                         <TextInput
@@ -49,9 +53,7 @@ const LoginScreen = () => {
                 </View>
 
                 
-                {/* 🎯 Input Senha */}
                 <View style={styles.inputGroup}>
-                    {/* Rótulo Flutuante (Posicionado absolutamente) */}
                     <Text style={[styles.inputLabel, styles.floatingLabel]}>Senha</Text>
                     <View style={styles.boxInput}>
                         <TextInput
@@ -63,7 +65,7 @@ const LoginScreen = () => {
                 </View>
 
                 
-                <TouchableOpacity style={styles.loginButton} onPress={() => console.log('Login Pressionado')}>
+                <TouchableOpacity style={styles.loginButton} onPress={handleLogin}>
                     <Text style={styles.buttonText}>LOGIN</Text>
                 </TouchableOpacity>
 
@@ -110,13 +112,11 @@ const styles = StyleSheet.create({
     inputGroup: {
         width: '100%',
         marginBottom: 20,
-        
         position: 'relative', 
     },
-    
     boxInput: {
         borderRadius: 8,
-        borderWidth: 1,
+        borderWidth: 1, 
         borderColor: primaryColor,
         paddingHorizontal: 10,
         paddingVertical: 5,
@@ -124,12 +124,10 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
     },
     inputLabel: {
-        
         color: primaryColor,
         fontSize: 14,
         marginBottom: 5,
     },
-    
     floatingLabel: {
         position: 'absolute',
         top: -10, 

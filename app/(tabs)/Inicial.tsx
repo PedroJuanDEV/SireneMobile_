@@ -1,5 +1,3 @@
-// app/(tabs)/index.tsx
-
 import { Ionicons } from '@expo/vector-icons';
 import React from 'react';
 import { SafeAreaView, ScrollView, StyleSheet, Text, View } from 'react-native';
@@ -26,16 +24,17 @@ const ActivityItem: React.FC<{ type: 'atribuida' | 'concluida' | 'andamento'; te
       break;
     case 'concluida':
       iconName = 'checkmark-circle';
-      iconColor = '#4CAF50'; // Verde
+      iconColor = '#4CAF50';
       break;
     case 'andamento':
       iconName = 'timer';
-      iconColor = '#FFC107'; // Amarelo
+      iconColor = '#FFC107';
       break;
   }
 
   return (
     <View style={styles.activityItem}>
+      {/* O ícone usa um Text wrapper para fins de alinhamento com alguns ícones */}
       <Ionicons name={iconName} size={24} color={iconColor} style={styles.activityIcon} />
       <View style={styles.activityTextContainer}>
         <Text style={styles.activityText}>{text}</Text>
@@ -45,12 +44,13 @@ const ActivityItem: React.FC<{ type: 'atribuida' | 'concluida' | 'andamento'; te
   );
 };
 
-export default function HomePage() {
+export default function InicialScreen() {
   return (
     <SafeAreaView style={styles.safeArea}>
       <ScrollView style={styles.scrollView}>
         <View style={styles.header}>
-          <Text style={styles.pageTitle}>Página inicial</Text>
+          {/* 🎯 CORREÇÃO: Encapsulando "Página inicial" dentro de <Text> */}
+          <Text style={styles.pageTitle}>Página inicial</Text> 
           <View style={styles.onlineStatus}>
             <View style={styles.onlineDot} />
             <Text style={styles.onlineText}>Online</Text>
@@ -93,7 +93,7 @@ export default function HomePage() {
           {/* Conteúdo dinâmico das ocorrências seria inserido aqui */}
         </View>
 
-        <View style={{ height: 100 }} /> {/* Espaçamento para a Tab Bar */}
+        <View style={{ height: 100 }} /> 
       </ScrollView>
     </SafeAreaView>
   );
@@ -102,7 +102,7 @@ export default function HomePage() {
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: '#F5F5F5', // Cor de fundo da tela
+    backgroundColor: '#F5F5F5',
   },
   scrollView: {
     paddingHorizontal: 15,
