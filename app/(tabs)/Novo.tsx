@@ -9,12 +9,10 @@ const FORMULARIOS = [
     
     { title: 'Formulário de atendimento', subtitle: 'BÁSICO', color: '#AAAAAA', route: 'FormBasico' },
     { title: 'Formulário de atendimento', subtitle: 'PRÉ-HOSPITALAR – CVI', color: '#1E90FF', route: '/FormPreHospitalar/forms1', nature: 'Natureza 1' }, 
-    // CORREÇÃO: Rota absoluta iniciando em '/'
-    { title: 'Formulário de atendimento', subtitle: 'INCÊNDIO', color: '#FF4500', route: '/Incendio/forms1', nature: 'Natureza 2' },
-    // Ajustado para seguir o padrão de rotas absolutas (assumindo que as pastas serão criadas em (tabs)/)
-    { title: 'Formulário de atendimento', subtitle: 'SALVAMENTO', color: '#FF8C00', route: '/Salvamento/forms1', nature: 'Natureza 3' },
-    { title: 'Formulário de atendimento', subtitle: 'PRODUTOS PERIGOSOS', color: '#FFD700', route: '/Perigosos/forms1', nature: 'Natureza 4' },
-    { title: 'Formulário de atendimento', subtitle: 'PREVENÇÃO', color: '#32CD32', route: '/Prevencao/forms1', nature: 'Natureza 5' },
+    { title: 'Formulário de atendimento', subtitle: 'INCÊNDIO', color: '#FF4500', route: '/incendio/forms1', nature: 'Natureza 2' },
+    { title: 'Formulário de atendimento', subtitle: 'SALVAMENTO', color: '#FF8C00', route: '/salvamento/forms1', nature: 'Natureza 3' },
+    { title: 'Formulário de atendimento', subtitle: 'PRODUTOS PERIGOSOS', color: '#FFD700', route: '/perigosos/forms1', nature: 'Natureza 4' },
+    { title: 'Formulário de atendimento', subtitle: 'PREVENÇÃO', color: '#32CD32', route: '/prevencao/forms1', nature: 'Natureza 5' },
 ];
 
 const FormularioButton: React.FC<{ data: typeof FORMULARIOS[0]; onPress: (route: string) => void }> = ({ data, onPress }) => (

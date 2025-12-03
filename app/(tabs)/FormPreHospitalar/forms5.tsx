@@ -46,9 +46,9 @@ export default function Forms5Natureza1() {
   const [guarnicaoEmpenhada, setGuarnicaoEmpenhada] = useState('Posto Geral');
 
   const handleFinish = () => {
-    // Lógica final de envio do formulário!
+    
     console.log('Formulário da Natureza 1 Finalizado e Enviado!');
-    // Volta para a tela de seleção de formulários ou Inicial
+    
     router.back(); 
   };
 
@@ -58,16 +58,16 @@ export default function Forms5Natureza1() {
 
   return (
     <FormContainer
-      currentStep={5} // Etapa 5 (Última)
+      currentStep={5} 
       totalSteps={5}
       title="Forms5-Natureza 1"
-      onAdvance={handleFinish} // Usamos o handleFinish no lugar do Avançar
+      onAdvance={handleFinish} 
       onCancel={handleCancel}
       showAdvanceButton={true}
-      advanceText='Finalizar' // Muda o texto para Finalizar/Concluir
-      showSaveButton={true} // Mantém o botão salvar
+      advanceText='Finalizar' 
+      showSaveButton={true} 
     >
-        {/* Veículos Envolvidos */}
+        
         <Text style={styles.sectionTitle}>Veículos envolvidos</Text>
         <RadioGroup 
             label="Veículos envolvidos" 
@@ -154,7 +154,6 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'space-between',
     },
-    // --- Estilos de Rádio (Reutilizados) ---
     radioGroup: {
         marginBottom: 10,
     },
@@ -184,7 +183,7 @@ const styles = StyleSheet.create({
         fontWeight: '600',
     },
     guarnicaoOptions: {
-        // Estilo para forçar a quebra de linha de forma elegante
+        
         flexDirection: 'row',
         flexWrap: 'wrap',
         marginBottom: 15,

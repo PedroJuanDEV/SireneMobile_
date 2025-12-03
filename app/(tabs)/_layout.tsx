@@ -1,5 +1,3 @@
-// app/(tabs)/_layout.tsx
-
 import { AntDesign, Ionicons } from '@expo/vector-icons';
 import { Tabs } from 'expo-router';
 import React from 'react';
@@ -80,26 +78,50 @@ export default function TabLayout() {
 
             {/* ROTAS DE FORMULÁRIO OCULTAS (Stacks) */}
             
-            {/* 1. Pré-Hospitalar (Se sua pasta se chama FormPreHospitalar) */}
+            {/* 1. Pré-Hospitalar */}
             <Tabs.Screen
                 name="FormPreHospitalar"
                 options={{
-                    href: null, // <--- OCULTA O ÍCONE DA BARRA
+                    href: null,
                     headerShown: false,
                 }}
             />
 
             {/* 2. Incêndio */}
             <Tabs.Screen
-                name="Incendio"
+                name="incendio"
                 options={{
-                    href: null, // <--- OCULTA O ÍCONE DA BARRA
+                    href: null, 
                     headerShown: false,
                 }}
             />
-
-            {/* Adicione Salvamento, Perigosos, etc., aqui à medida que as pastas forem criadas */}
             
+            {/* 3. Salvamento */}
+            <Tabs.Screen
+                name="salvamento"
+                options={{
+                    href: null, 
+                    headerShown: false,
+                }}
+            />
+            
+            {/* 4. Produtos Perigosos <-- NOVO */}
+            <Tabs.Screen
+                name="perigosos"
+                options={{
+                    href: null, 
+                    headerShown: false,
+                }}
+            />
+            
+            {/* 5. Prevenção */}
+            <Tabs.Screen
+                name="prevencao"
+                options={{
+                    href: null,
+                    headerShown: false,
+                }}
+            />
         </Tabs>
     );
 }
