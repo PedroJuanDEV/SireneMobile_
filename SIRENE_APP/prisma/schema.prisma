@@ -1,0 +1,229 @@
+// Schema do Banco de Dados - Sistema Corpo de Bombeiros
+// Versão: 1.0
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+// Tabela: Militar
+model Militar {
+  id           String   @id @default(auto()) @map("_id") @db.ObjectId
+  nome         String?
+  matricula    String?  @unique
+  cpf          String?
+  numeroMilitar String?
+  posto        String?
+  email        String?
+  senhaHash    String?  @map("senha_hash")
+  perfilAcesso String?  @map("perfil_acesso")
+
+  // Relacionamentos
+  equipesLideradas    Equipe[]           @relation("EquipeLider")
+  militarEquipes      MilitarEquipe[]
+  registrosOcorrencia RegistroOcorrencia[]
+  logsAuditoria       LogAuditoria[]
+  relatorios          Relatorio[]
+
+  @@map("Militar")
+}
+
+// Tabela: Equipe
+model Equipe {
+  id               String   @id @default(auto()) @map("_id") @db.ObjectId
+  nomeEquipe       String?  @map("nome_equipe")
+  turno            String?
+  idMilitarLider   String?  @db.ObjectId
+
+  // Relacionamentos
+  lider               Militar?            @relation("EquipeLider", fields: [idMilitarLider], references: [id])
+  militarEquipes      MilitarEquipe[]
+  registrosOcorrencia RegistroOcorrencia[]
+
+  @@map("Equipe")
+}
+
+// Tabela: Ocorrencia
+model Ocorrencia {
+  id                String    @id @default(auto()) @map("_id") @db.ObjectId
+  dataHora          DateTime? @map("data_hora")
+  tipoOcorrencia    String?   @map("tipo_ocorrencia")
+  descricao         String?
+  endereco          String?   @map("endereco")
+  numero            String?   @map("numero")
+  regiao            String?   @map("regiao")
+  cidade            String?
+  bairro            String?          
+  localizacaoGps    String?   @map("localizacao_gps")
+  pontoReferencia   String?   @map("ponto_referencia")
+  prioridade        String?   @map("prioridade")
+  status            String?
+  assinaturaDigital String?   @map("assinatura_digital")
+  fotoUrl           String?   @map("foto_url")
+  videoUrl          String?   @map("video_url")
+
+  // Relacionamentos
+  registrosOcorrencia RegistroOcorrencia[]
+  relatorios          Relatorio[]
+
+  @@map("Ocorrencia")
+}
+
+// Tabela: RegistroOcorrencia
+model RegistroOcorrencia {
+  id             String    @id @default(auto()) @map("_id") @db.ObjectId
+  idOcorrencia   String?   @db.ObjectId
+  idMilitar      String?   @db.ObjectId
+  idEquipe       String?   @db.ObjectId
+  dataRegistro   DateTime? @map("data_registro")
+  observacoes    String?
+
+  // Relacionamentos
+  ocorrencia Ocorrencia? @relation(fields: [idOcorrencia], references: [id])
+  militar    Militar?    @relation(fields: [idMilitar], references: [id])
+  equipe     Equipe?     @relation(fields: [idEquipe], references: [id])
+
+  @@map("RegistroOcorrencia")
+}
+
+// Tabela: LogAuditoria
+model LogAuditoria {
+  id         String    @id @default(auto()) @map("_id") @db.ObjectId
+  idMilitar  String?   @db.ObjectId
+  acao       String?
+  dataHora   DateTime? @map("data_hora")
+  ipOrigem   String?   @map("ip_origem")
+
+  // Relacionamentos
+  militar Militar? @relation(fields: [idMilitar], references: [id])
+
+  @@map("LogAuditoria")
+}
+
+// Tabela: Relatorio
+model Relatorio {
+  id           String    @id @default(auto()) @map("_id") @db.ObjectId
+  idOcorrencia String?   @db.ObjectId
+  geradoPor    String?   @db.ObjectId
+  dataGeracao  DateTime? @map("data_geracao")
+  formato      String?
+  urlArquivo   String?
+
+  // Relacionamentos
+  ocorrencia Ocorrencia? @relation(fields: [idOcorrencia], references: [id])
+  militar    Militar?    @relation(fields: [geradoPor], references: [id])
+
+  @@map("Relatorio")
+}
+
+// Tabela de Junção: MilitarEquipe
+model MilitarEquipe {
+  id         String @id @default(auto()) @map("_id") @db.ObjectId
+  idMilitar  String @db.ObjectId
+  idEquipe   String @db.ObjectId
+
+  // Relacionamentos
+  militar Militar @relation(fields: [idMilitar], references: [id])
+  equipe  Equipe  @relation(fields: [idEquipe], references: [id])
+
+  @@map("MilitarEquipe")
+}
+
+// Formulários de atendimento (cada tipo em sua própria coleção)
+// 1) BÁSICO
+model FormularioBasico {
+  id           String   @id @default(auto()) @map("_id") @db.ObjectId
+  idOcorrencia String?  @db.ObjectId
+  
+  // Campos do Formulário Básico
+  pontoBase             String?
+  ome                   String?
+  viaturaResponsavel    String?
+  numeroAviso           String?
+  data                  DateTime?
+  horaRecebimento       DateTime?
+  formaAcionamento      String?
+  formaAcionamentoOutros String?
+  situacaoOcorrencia    String?
+  situacaoOcorrenciaOutros String?
+  localAcionamento      String?
+  localAcionamentoOutros String?
+  areaOBM               Boolean?
+  codigoLocal           String?
+  referencia            String?
+  solicitanteNome       String?
+  solicitanteTelefone   String?
+  deslocamento          Json?      // Para armazenar horários de saída, chegada, etc.
+  viaturaLocal          String?
+  placaViaturaLocal     String?
+  apoio                 String?
+  viaturasEnvolvidas    Json?      // Para armazenar múltiplas viaturas
+  historico             String?
+  continuacao           Boolean?
+  dificuldadesAtuacao   String?
+  eventoNatureza        String?
+  formulariosPreenchidos String?
+  tipoVitima            String?
+  veiculosEnvolvidos    Json?
+  guarnicaoEmpenhada    Json?
+  vistoDivisaoOperacoes String?
+
+  dados        Json?
+  criadoEm     DateTime @default(now()) @map("criado_em")
+  atualizadoEm DateTime? @map("atualizado_em")
+
+  // relação mantida pelo id (idOcorrencia) sem constraint Prisma para evitar necessidade de campo inverso
+  @@map("FormularioBasico")
+}
+
+// 2) PRÉ-HOSPITALAR - CVI
+model FormularioPreHospital {
+  id           String   @id @default(auto()) @map("_id") @db.ObjectId
+  idOcorrencia String?  @db.ObjectId
+  dados        Json?
+  criadoEm     DateTime @default(now()) @map("criado_em")
+  atualizadoEm DateTime? @map("atualizado_em")
+
+  // relação mantida pelo id (idOcorrencia) sem constraint Prisma
+  @@map("FormularioPreHospital")
+}
+
+// 3) INCÊNDIO
+model FormularioIncendio {
+  id           String   @id @default(auto()) @map("_id") @db.ObjectId
+  idOcorrencia String?  @db.ObjectId
+  dados        Json?
+  criadoEm     DateTime @default(now()) @map("criado_em")
+  atualizadoEm DateTime? @map("atualizado_em")
+
+  // relação mantida pelo id (idOcorrencia) sem constraint Prisma
+  @@map("FormularioIncendio")
+}
+
+// 4) SALVAMENTO
+model FormularioSalvamento {
+  id           String   @id @default(auto()) @map("_id") @db.ObjectId
+  idOcorrencia String?  @db.ObjectId
+  dados        Json?
+  criadoEm     DateTime @default(now()) @map("criado_em")
+  atualizadoEm DateTime? @map("atualizado_em")
+
+  // relação mantida pelo id (idOcorrencia) sem constraint Prisma
+  @@map("FormularioSalvamento")
+}
+
+// 5) PRODUTOS PERIGOSOS
+model FormularioProdutosPerigosos {
+  id           String   @id @default(auto()) @map("_id") @db.ObjectId
+  idOcorrencia String?  @db.ObjectId
+  dados        Json?
+  criadoEm     DateTime @default(now()) @map("criado_em")
+  atualizadoEm DateTime? @map("atualizado_em")
+
+  // relação mantida pelo id (idOcorrencia) sem constraint Prisma
+  @@map("FormularioProdutosPerigosos")
+}
