@@ -1,6 +1,7 @@
 import { Stack, useNavigation } from 'expo-router';
 import React from 'react';
-import { SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View, Alert } from 'react-native';
+import { useFormStore } from '@/src/context/FormStore';
 
 const INCENDIO_COLOR_HEADER = '#DB2626'; 
 const INCENDIO_COLOR_STEPS = '#DB2626';
@@ -32,6 +33,7 @@ export default function FormContainerIncendio({
     showSaveButton = true,
 }: FormContainerProps) {
     const navigation = useNavigation();
+    const store = useFormStore();
 
     React.useLayoutEffect(() => {
         navigation.setOptions({
@@ -88,7 +90,26 @@ export default function FormContainerIncendio({
                 </TouchableOpacity>
 
                 {showSaveButton && (
-                    <TouchableOpacity style={styles.saveButton} onPress={() => console.log('Salvar Rascunho')}>
+                    <TouchableOpacity style={styles.saveButton} onPress={async () => {
+                        try {
+                            const payload = {
+                                titulo: 'Registro de formulário',
+                                observacoes: 'Rascunho salvo pelo app',
+                                dataRegistro: new Date().toISOString(),
+                            };
+                            const result = await store.saveRegistro(payload);
+                            if (result.offline) {
+                                Alert.alert('Salvo offline', 'Registro salvo localmente. Será sincronizado quando houver conexão.');
+                            } else if (result.ok) {
+                                Alert.alert('Sucesso', 'Registro enviado com sucesso.');
+                            } else {
+                                Alert.alert('Aviso', 'Registro salvo (possível problema ao enviar).');
+                            }
+                        } catch (err) {
+                            console.warn('Erro ao salvar registro', err);
+                            Alert.alert('Erro', 'Não foi possível salvar o registro.');
+                        }
+                    }}>
                         <Text style={styles.buttonText}>Salvar</Text>
                     </TouchableOpacity>
                 )}

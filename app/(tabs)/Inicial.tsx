@@ -1,6 +1,8 @@
 import { Ionicons } from '@expo/vector-icons';
-import React from 'react';
-import { SafeAreaView, ScrollView, StyleSheet, Text, View } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { SafeAreaView, ScrollView, StyleSheet, Text, View, ActivityIndicator } from 'react-native';
+import * as SecureStore from 'expo-secure-store';
+import { API_BASE_URL } from '../../src/api/config';
 
 const primaryColor = '#550D08';
 
@@ -45,6 +47,57 @@ const ActivityItem: React.FC<{ type: 'atribuida' | 'concluida' | 'andamento'; te
 };
 
 export default function InicialScreen() {
+  const [ocorrencias, setOcorrencias] = useState<any[]>([]);
+  const [registros, setRegistros] = useState<any[]>([]);
+  const [loadingOcorrencias, setLoadingOcorrencias] = useState(false);
+  const [loadingRegistros, setLoadingRegistros] = useState(false);
+
+  useEffect(() => {
+    fetchOcorrencias();
+    fetchRegistros();
+  }, []);
+
+  const fetchOcorrencias = async () => {
+    setLoadingOcorrencias(true);
+    try {
+      const res = await fetch(`${API_BASE_URL}/ocorrencia`);
+      if (!res.ok) throw new Error(`Status ${res.status}`);
+      const data = await res.json();
+      const list = Array.isArray(data) ? data : data?.data ?? [];
+      setOcorrencias(list.slice(0, 6));
+    } catch (err) {
+      console.error('Erro ao buscar ocorrencias:', err);
+    } finally {
+      setLoadingOcorrencias(false);
+    }
+  };
+
+  const fetchRegistros = async () => {
+    setLoadingRegistros(true);
+    try {
+      const token = await SecureStore.getItemAsync('token');
+      const headers: any = {};
+      if (token) headers.Authorization = `Bearer ${token}`;
+      const res = await fetch(`${API_BASE_URL}/registro-ocorrencia`, { headers });
+      if (!res.ok) throw new Error(`Status ${res.status}`);
+      const data = await res.json();
+      const list = Array.isArray(data) ? data : data?.data ?? [];
+      setRegistros(list.slice(0, 6));
+    } catch (err) {
+      console.error('Erro ao buscar registros:', err);
+    } finally {
+      setLoadingRegistros(false);
+    }
+  };
+
+  const formatRelativeTime = (date: Date) => {
+    const diff = Math.floor((Date.now() - date.getTime()) / 1000);
+    if (diff < 60) return `há ${diff}s`;
+    if (diff < 3600) return `há ${Math.floor(diff / 60)}m`;
+    if (diff < 86400) return `há ${Math.floor(diff / 3600)}h`;
+    return `há ${Math.floor(diff / 86400)}d`;
+  };
+
   return (
     <SafeAreaView style={styles.safeArea}>
       <ScrollView style={styles.scrollView}>
@@ -70,27 +123,38 @@ export default function InicialScreen() {
         {/* --- Atividades Recentes --- */}
         <Text style={styles.sectionTitle}>Atividades recentes</Text>
         <View style={styles.activityCard}>
-          <ActivityItem 
-            type="atribuida" 
-            text="Nova ocorrência atribuída" 
-            time="há 2 minutos" 
-          />
-          <ActivityItem 
-            type="concluida" 
-            text="Ocorrência #202590 Concluída" 
-            time="há 5 minutos" 
-          />
-          <ActivityItem 
-            type="andamento" 
-            text="Ocorrência #202590 Em andamento" 
-            time="há 7 minutos" 
-          />
+          {loadingRegistros ? (
+            <ActivityIndicator style={{ padding: 20 }} />
+          ) : registros.length === 0 ? (
+            <Text style={{ padding: 12, color: '#666' }}>Nenhuma atividade recente</Text>
+          ) : (
+            registros.map(r => (
+              <ActivityItem
+                key={r.id}
+                type={r.status === 'CONCLUÍDA' ? 'concluida' : r.status === 'ATRIBUIDA' ? 'atribuida' : 'andamento'}
+                text={r.titulo || r.descricao || `Registro #${r.id}`}
+                time={r.criadoEm ? formatRelativeTime(new Date(r.criadoEm)) : ''}
+              />
+            ))
+          )}
         </View>
 
         {/* --- Ocorrências Recentes (Placeholder) --- */}
         <Text style={styles.sectionTitle}>Ocorrências recentes</Text>
         <View style={styles.ocorrenciasCard}>
-          {/* Conteúdo dinâmico das ocorrências seria inserido aqui */}
+          {loadingOcorrencias ? (
+            <ActivityIndicator style={{ padding: 20 }} />
+          ) : ocorrencias.length === 0 ? (
+            <Text style={{ padding: 12, color: '#666' }}>Nenhuma ocorrência recente</Text>
+          ) : (
+            ocorrencias.map(o => (
+              <View key={o.id} style={{ padding: 12, borderBottomWidth: 1, borderBottomColor: '#EEE' }}>
+                <Text style={{ fontWeight: '700', color: primaryColor }}>{o.tipo || o.tipoOcorrencia || 'Ocorrência'}</Text>
+                <Text style={{ color: '#333', marginTop: 4 }}>{o.descricao || o.endereco || ''}</Text>
+                <Text style={{ color: '#AAA', marginTop: 6 }}>{o.dataHora ? new Date(o.dataHora).toLocaleString() : ''}</Text>
+              </View>
+            ))
+          )}
         </View>
 
         <View style={{ height: 100 }} /> 

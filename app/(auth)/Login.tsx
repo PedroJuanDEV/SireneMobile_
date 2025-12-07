@@ -1,6 +1,8 @@
 import { useRouter } from 'expo-router';
-import React from 'react';
-import { Dimensions, Image, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import React, { useState } from 'react';
+import { Dimensions, Image, StyleSheet, Text, TextInput, TouchableOpacity, View, ActivityIndicator, Alert } from 'react-native';
+import * as SecureStore from 'expo-secure-store';
+import { API_BASE_URL } from '../../src/api/config';
 
 const { width, height } = Dimensions.get('window');
 
@@ -11,17 +13,57 @@ const logoSource = require('../../assets/images/LogoSirene.png');
 
 const LoginScreen = () => {
     
-    const router = useRouter(); 
-    
-    const handleLogin = () => {
-        // Navegação explícita para o arquivo Inicial dentro do grupo (tabs)
-        // Isso resolve o erro 'Unmatched Route' forçando o carregamento da tela correta.
-        router.replace('/(tabs)/Inicial'); 
-        console.log('Login bem-sucedido. Redirecionando para a Página Inicial.');
+    const router = useRouter();
+    const [matricula, setMatricula] = useState('');
+    const [senha, setSenha] = useState('');
+    const [loading, setLoading] = useState(false);
+
+    const handleLogin = async () => {
+        setLoading(true);
+        const controller = new AbortController();
+        const timeout = setTimeout(() => controller.abort(), 10000);
+        try {
+            console.debug('[Login] URL:', API_BASE_URL + '/auth/login');
+            const payload = { matricula: String(matricula), senha: String(senha) };
+            console.debug('[Login] payload:', JSON.stringify(payload));
+            const res = await fetch(`${API_BASE_URL}/auth/login`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload),
+                signal: controller.signal,
+            });
+            clearTimeout(timeout);
+            if (!res.ok) {
+                const errText = await res.text();
+                console.error('Erro no login:', res.status, errText);
+                Alert.alert('Erro', 'Credenciais inválidas ou erro no servidor.');
+                return;
+            }
+            const body = await res.json();
+            const token = body?.data?.token || body?.token || body?.data?.accessToken;
+            if (!token) {
+                console.error('Resposta sem token:', body);
+                Alert.alert('Erro', 'Resposta do servidor inválida.');
+                return;
+            }
+            await SecureStore.setItemAsync('token', token);
+            console.log('Login bem-sucedido. Token salvo. Redirecionando para a Página Inicial.');
+            router.replace('/(tabs)/Inicial');
+        } catch (error: any) {
+            if (error.name === 'AbortError') {
+                console.error('Requisição abortada:', error);
+                Alert.alert('Erro', 'Tempo de conexão esgotado. Verifique a rede.');
+            } else {
+                console.error('Erro no login (catch):', error);
+                Alert.alert('Erro', 'Falha na requisição de login. Veja o console para mais detalhes.');
+            }
+        } finally {
+            setLoading(false);
+        }
     };
     
     const handleForgotPassword = () => {
-        router.push('RecuperarSenha1'); 
+        router.push('/RecuperarSenha1'); 
         console.log('Navegando para RecuperarSenha1');
     };
 
@@ -47,7 +89,9 @@ const LoginScreen = () => {
                         <TextInput
                             style={styles.input}
                             placeholderTextColor={placeholderColor}
-                            keyboardType="numeric"
+                            value={matricula}
+                            onChangeText={setMatricula}
+                            autoCapitalize="none"
                         />
                     </View>
                 </View>
@@ -60,13 +104,20 @@ const LoginScreen = () => {
                             style={styles.input}
                             placeholderTextColor={placeholderColor}
                             secureTextEntry={true}
+                            value={senha}
+                            onChangeText={setSenha}
+                            autoCapitalize="none"
                         />
                     </View>
                 </View>
 
                 
-                <TouchableOpacity style={styles.loginButton} onPress={handleLogin}>
-                    <Text style={styles.buttonText}>LOGIN</Text>
+                <TouchableOpacity style={styles.loginButton} onPress={handleLogin} disabled={loading}>
+                    {loading ? (
+                        <ActivityIndicator color="#fff" />
+                    ) : (
+                        <Text style={styles.buttonText}>LOGIN</Text>
+                    )}
                 </TouchableOpacity>
 
                 

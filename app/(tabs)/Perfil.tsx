@@ -1,7 +1,9 @@
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
-import React from 'react';
-import { Image, SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'; // 🎯 Adicionado 'Image'
+import React, { useEffect, useState } from 'react';
+import { Image, SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View, ActivityIndicator, Alert } from 'react-native'; // 🎯 Adicionado 'Image'
+import * as SecureStore from 'expo-secure-store';
+import { API_BASE_URL } from '@/src/api/config';
 
 const primaryColor = '#550D08'; 
 const textColor = '#333333';
@@ -29,10 +31,63 @@ const InfoItem: React.FC<{ label: string; value: string }> = ({ label, value }) 
 
 export default function PerfilScreen() {
     const router = useRouter();
-    
-    const handleLogout = () => {
+    const [loading, setLoading] = useState(true);
+    const [profile, setProfile] = useState<any>(null);
+
+    const handleLogout = async () => {
+        try {
+            await SecureStore.deleteItemAsync('token');
+        } catch (err) {
+            console.warn('Erro ao remover token', err);
+        }
         router.replace('/(auth)/Login');
     };
+
+    useEffect(() => {
+        let mounted = true;
+        const load = async () => {
+            try {
+                const token = await SecureStore.getItemAsync('token');
+                if (!token) {
+                    router.replace('/(auth)/Login');
+                    return;
+                }
+
+                const res = await fetch(`${API_BASE_URL}/auth/me`, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        Authorization: `Bearer ${token}`,
+                    },
+                });
+
+                if (!mounted) return;
+
+                if (!res.ok) {
+                    // token inválido ou outro erro
+                    const text = await res.text();
+                    console.warn('auth/me erro:', res.status, text);
+                    Alert.alert('Erro', 'Não foi possível carregar seu perfil. Faça login novamente.');
+                    await SecureStore.deleteItemAsync('token');
+                    router.replace('/(auth)/Login');
+                    return;
+                }
+
+                const data = await res.json();
+                if (!mounted) return;
+                setProfile(data?.data || data || null);
+            } catch (error) {
+                console.warn('Erro ao obter perfil', error);
+                Alert.alert('Erro', 'Erro ao carregar perfil. Verifique sua conexão.');
+            } finally {
+                if (mounted) setLoading(false);
+            }
+        };
+
+        load();
+
+        return () => { mounted = false; };
+    }, []);
 
     return (
         <SafeAreaView style={styles.safeArea}>
@@ -50,21 +105,27 @@ export default function PerfilScreen() {
                         />
                     </View>
                     
-                    <Text style={styles.userName}>marshall</Text>
-                    <Text style={styles.userRole}>Capitão</Text>
+                    {loading ? (
+                        <ActivityIndicator size="small" color="#FFF" style={{ marginTop: 10 }} />
+                    ) : (
+                        <>
+                            <Text style={styles.userName}>{profile?.nome || profile?.name || 'Usuário'}</Text>
+                            <Text style={styles.userRole}>{profile?.funcao || profile?.role || ''}</Text>
+                        </>
+                    )}
                 </View>
 
                 
                 <InfoCard title="Informações da conta">
-                    <InfoItem label="E-mail" value="pedrojuan@email.com" />
-                    <InfoItem label="Número de contato" value="81 99999-9999" />
-                    <InfoItem label="Função" value="Operador de campo" />
+                    <InfoItem label="E-mail" value={profile?.email || profile?.username || ''} />
+                    <InfoItem label="Número de contato" value={profile?.telefone || profile?.phone || ''} />
+                    <InfoItem label="Função" value={profile?.funcao || profile?.role || ''} />
                 </InfoCard>
 
                 <InfoCard title="Informações operacionais">
-                    <InfoItem label="Matrícula" value="12345" />
-                    <InfoItem label="Viatura" value="VTR-457" />
-                    <InfoItem label="Turno" value="Manhã - Tarde" />
+                    <InfoItem label="Matrícula" value={profile?.matricula?.toString?.() || ''} />
+                    <InfoItem label="Viatura" value={profile?.viatura || ''} />
+                    <InfoItem label="Turno" value={profile?.turno || ''} />
                 </InfoCard>
 
                 {/* Botão de Sair */}

@@ -1,6 +1,7 @@
 import { useRouter } from 'expo-router';
 import React from 'react';
-import { SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View, Alert } from 'react-native';
+import { useFormStore } from '@/src/context/FormStore';
 
 const primaryColor = '#550D08'; 
 const cardBackgroundColor = '#FFFFFF';
@@ -31,6 +32,7 @@ const FormularioButton: React.FC<{ data: typeof FORMULARIOS[0]; onPress: (route:
 export default function NovoScreen() {
     
     const router = useRouter(); 
+    const store = useFormStore();
 
     const handleFormSelection = (route: string) => {
         // A lógica de verificação já está correta, garantindo que a rota comece com '/'
@@ -45,6 +47,17 @@ export default function NovoScreen() {
         <SafeAreaView style={styles.safeArea}>
             <View style={styles.pageHeader}>
                 <Text style={styles.pageTitle}>Registro-Ocorrências</Text>
+                <TouchableOpacity style={{ marginLeft: 10 }} onPress={async () => {
+                    try {
+                        const res = await store.syncAll();
+                        Alert.alert('Sincronização', `Sincronizados: ${res.synced}, falhas: ${res.failed}`);
+                    } catch (err) {
+                        console.warn('Erro ao sincronizar', err);
+                        Alert.alert('Erro', 'Falha ao sincronizar registros.');
+                    }
+                }}>
+                    <Text style={{ color: '#007AFF' }}>Sincronizar</Text>
+                </TouchableOpacity>
             </View>
             
             <ScrollView contentContainerStyle={styles.scrollViewContent}>

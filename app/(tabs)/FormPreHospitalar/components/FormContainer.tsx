@@ -2,7 +2,8 @@
 
 import { Stack, useNavigation } from 'expo-router';
 import React from 'react';
-import { SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View, Alert } from 'react-native';
+import { useFormStore } from '@/src/context/FormStore';
 
 interface FormContainerProps {
   currentStep: number;
@@ -88,9 +89,7 @@ const FormContainer: React.FC<FormContainerProps> = ({
         </TouchableOpacity>
         
         {showSaveButton && (
-          <TouchableOpacity style={styles.saveButton} onPress={() => console.log('Salvar Rascunho')}>
-            <Text style={styles.buttonText}>Salvar</Text>
-          </TouchableOpacity>
+          <SaveButton onSave={() => console.log('Salvar Rascunho')} />
         )}
 
         {showAdvanceButton && (
@@ -102,6 +101,40 @@ const FormContainer: React.FC<FormContainerProps> = ({
         {/* O botão de '+' da imagem não está implementado aqui, mas você pode adicioná-lo */}
       </View>
     </SafeAreaView>
+  );
+};
+
+const SaveButton: React.FC<{ onSave?: () => void }> = ({ onSave }) => {
+  const store = useFormStore();
+  const handleSave = async () => {
+    try {
+      // payload mínimo — formulários específicos podem chamar APIs próprias
+      const payload = {
+        titulo: 'Registro de formulário',
+        observacoes: 'Rascunho salvo pelo app',
+        dataRegistro: new Date().toISOString(),
+      };
+
+      const result = await store.saveRegistro(payload);
+      if (result.offline) {
+        Alert.alert('Salvo offline', 'Registro salvo localmente. Será sincronizado quando houver conexão.');
+      } else if (result.ok) {
+        Alert.alert('Sucesso', 'Registro enviado com sucesso.');
+      } else {
+        Alert.alert('Aviso', 'Registro salvo (possível problema ao enviar).');
+      }
+
+      if (onSave) onSave();
+    } catch (err) {
+      console.warn('Erro ao salvar registro', err);
+      Alert.alert('Erro', 'Não foi possível salvar o registro.');
+    }
+  };
+
+  return (
+    <TouchableOpacity style={styles.saveButton} onPress={handleSave}>
+      <Text style={styles.buttonText}>Salvar</Text>
+    </TouchableOpacity>
   );
 };
 
