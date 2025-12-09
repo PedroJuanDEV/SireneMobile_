@@ -1,8 +1,8 @@
-import { Request, Response, NextFunction } from 'express';
+import { NextFunction, Response } from 'express';
+import prisma from '../database/prisma';
+import { AuthRequest, PerfilAcesso } from '../types';
 import { AuthUtils } from '../utils/auth';
 import { ResponseUtils } from '../utils/response';
-import { AuthRequest, PerfilAcesso } from '../types';
-import prisma from '../database/prisma';
 
 
 export const authenticateToken = async (

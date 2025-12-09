@@ -2,6 +2,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { Picker } from '@react-native-picker/picker';
 import React, { useEffect, useState } from 'react';
 import {
+    ActivityIndicator,
     Dimensions,
     SafeAreaView,
     ScrollView,
@@ -10,10 +11,9 @@ import {
     TextInput,
     TouchableOpacity,
     View,
-    ActivityIndicator,
 } from 'react-native';
 import { API_BASE_URL } from '../../src/api/config';
-import { getOcorrencias, getOcorrenciaById, updateOcorrencia } from '../../src/api/ocorrencia';
+import { updateOcorrencia } from '../../src/api/ocorrencia';
 
 const primaryColor = '#550D08';
 const cardBackgroundColor = '#FFFFFF';

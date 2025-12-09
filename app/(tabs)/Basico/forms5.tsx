@@ -2,10 +2,9 @@
 
 import { MaterialIcons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
-import React, { useState } from 'react';
-import { KeyboardTypeOptions, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View, ActivityIndicator, Alert } from 'react-native';
-import { createOcorrencia } from '../../../src/api/ocorrencia';
 import * as SecureStore from 'expo-secure-store';
+import React, { useState } from 'react';
+import { ActivityIndicator, Alert, KeyboardTypeOptions, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { createFormularioBasico } from '../../../src/api/formularioBasico';
 import FormContainerBasico from './components/FormContainerBasico';
 

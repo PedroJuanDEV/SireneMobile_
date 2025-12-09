@@ -1,25 +1,25 @@
-import express from 'express';
 import cors from 'cors';
-import helmet from 'helmet';
 import dotenv from 'dotenv';
+import express from 'express';
+import helmet from 'helmet';
 
 // Importar middlewares
 import { errorHandler, rateLimiter, requestLogger } from './middleware/general';
 
 // Importar rotas
 import authRoutes from './routes/auth';
-import ocorrenciaRoutes from './routes/ocorrencia';
-import relatorioRoutes from './routes/relatorio';
 import equipeRoutes from './routes/equipe';
-import registroOcorrenciaRoutes from './routes/registroOcorrencia';
+import formularioBasicoRoutes from './routes/formularioBasico';
+import formularioIncendioRoutes from './routes/formularioIncendio';
+import formularioPreHospitalRoutes from './routes/formularioPreHospital';
+import formularioPrevencaoRoutes from './routes/formularioPrevencao';
+import formularioProdutosPerigososRoutes from './routes/formularioProdutosPerigosos';
+import formularioSalvamentoRoutes from './routes/formularioSalvamento';
 import logAuditoriaRoutes from './routes/logAuditoria';
 import militarEquipeRoutes from './routes/militarEquipe';
-import formularioBasicoRoutes from './routes/formularioBasico';
-import formularioPreHospitalRoutes from './routes/formularioPreHospital';
-import formularioIncendioRoutes from './routes/formularioIncendio';
-import formularioSalvamentoRoutes from './routes/formularioSalvamento';
-import formularioProdutosPerigososRoutes from './routes/formularioProdutosPerigosos';
-import formularioPrevencaoRoutes from './routes/formularioPrevencao';
+import ocorrenciaRoutes from './routes/ocorrencia';
+import registroOcorrenciaRoutes from './routes/registroOcorrencia';
+import relatorioRoutes from './routes/relatorio';
 
 // Carregar variáveis de ambiente
 dotenv.config();

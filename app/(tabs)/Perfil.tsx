@@ -1,9 +1,9 @@
+import { API_BASE_URL } from '@/src/api/config';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
-import React, { useEffect, useState } from 'react';
-import { Image, SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View, ActivityIndicator, Alert } from 'react-native'; // 🎯 Adicionado 'Image'
 import * as SecureStore from 'expo-secure-store';
-import { API_BASE_URL } from '@/src/api/config';
+import React, { useEffect, useState } from 'react';
+import { ActivityIndicator, Alert, Image, SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'; // 🎯 Adicionado 'Image'
 
 const primaryColor = '#550D08'; 
 const textColor = '#333333';
