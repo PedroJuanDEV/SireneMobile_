@@ -42,7 +42,7 @@ export default function Forms1Natureza2Incendio() {
     const [imovelDanos, setImovelDanos] = React.useState('');
 
     const handleAdvance = () => {
-        router.push('/incendio/forms2'); 
+        router.push('/Incendio/forms2'); 
     };
 
     const handleCancel = () => {

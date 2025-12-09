@@ -61,7 +61,7 @@ export default function Forms4Natureza2Incendio() {
     const [historico, setHistorico] = useState('');
 
     const handleAdvance = () => {
-        router.push('/incendio/forms5'); 
+        router.push('/Incendio/forms5'); 
     };
 
     const handleCancel = () => {

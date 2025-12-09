@@ -89,7 +89,7 @@ export default function TabLayout() {
 
             {/* 2. Incêndio */}
             <Tabs.Screen
-                name="incendio"
+                name="Incendio"
                 options={{
                     href: null, 
                     headerShown: false,
@@ -105,7 +105,7 @@ export default function TabLayout() {
                 }}
             />
             
-            {/* 4. Produtos Perigosos <-- NOVO */}
+            {/* 4. Produtos Perigosos */}
             <Tabs.Screen
                 name="perigosos"
                 options={{
@@ -121,7 +121,17 @@ export default function TabLayout() {
                     href: null,
                     headerShown: false,
                 }}
+            /> {/* <-- CHAVE DE FECHAMENTO CORRIGIDA AQUI */}
+
+            {/* 6. Básico */}
+            <Tabs.Screen
+                name="Basico" // <-- Usando minúsculas conforme sua pasta
+                options={{
+                    href: null,
+                    headerShown: false,
+                }}
             />
+
         </Tabs>
     );
 }

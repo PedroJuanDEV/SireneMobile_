@@ -16,10 +16,40 @@ const primaryColor = '#550D08';
 const cardBackgroundColor = '#FFFFFF';
 const inputBorderColor = '#CCCCCC';
 const screenHeight = Dimensions.get('window').height;
-
-// --- Componentes Modais ---
-
 const ViewOccurrenceModal: React.FC<{ onClose: () => void }> = ({ onClose }) => (
+    <View style={styles.modalContent}>
+        <Text style={styles.modalTitle}>Visualizar ocorrência</Text>
+        
+        <View style={styles.inputRow}>
+            <View style={styles.inputGroupLogradouro}>
+                {/* Visualizar: INPUTS EM ESTILO READ-ONLY */}
+                <TextInput style={styles.modalInputVisualizar} placeholder="Logradouro" value="Rua das Flores, 123" editable={false} />
+            </View>
+            <View style={styles.inputGroupNumero}>
+                <TextInput style={styles.modalInputVisualizar} placeholder="Nº" value="45" editable={false} />
+            </View>
+        </View>
+        
+        <View style={styles.inputRow}>
+            <View style={styles.inputGroupHalf}>
+                <TextInput style={styles.modalInputVisualizar} placeholder="Bairro" value="Centro" editable={false} />
+            </View>
+            <View style={styles.inputGroupHalf}>
+                <TextInput style={styles.modalInputVisualizar} placeholder="Município/UF" value="Recife/PE" editable={false} />
+            </View>
+        </View>
+        
+        <View style={styles.modalButtonRow}>
+            {/* O modal de visualização só precisa de um botão "Cancelar" (ou "Fechar") */}
+            <TouchableOpacity style={styles.modalSaveButton} onPress={onClose}>
+                <Text style={styles.modalSaveButtonText}>Fechar</Text>
+            </TouchableOpacity>
+        </View>
+    </View>
+);
+
+// 2. MODAL DE EDIÇÃO (EDITÁVEL, COM BOTÃO SALVAR)
+const EditOccurrenceModal: React.FC<{ onClose: () => void }> = ({ onClose }) => (
     <View style={styles.modalContent}>
         <Text style={styles.modalTitle}>Editar ocorrência</Text>
         
@@ -45,13 +75,15 @@ const ViewOccurrenceModal: React.FC<{ onClose: () => void }> = ({ onClose }) => 
             <TouchableOpacity style={styles.modalCancelButton} onPress={onClose}>
                 <Text style={styles.modalCancelButtonText}>Cancelar</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.modalSaveButton} onPress={() => { console.log('Salvar'); onClose(); }}>
+            <TouchableOpacity style={styles.modalSaveButton} onPress={() => { console.log('Salvar Edição'); onClose(); }}>
                 <Text style={styles.modalSaveButtonText}>Salvar</Text>
             </TouchableOpacity>
         </View>
     </View>
 );
 
+
+// 3. MODAL DE DELETAR (SEM ALTERAÇÃO)
 const DeleteOccurrenceModal: React.FC<{ onClose: () => void }> = ({ onClose }) => (
     <View style={styles.modalContent}>
         <Text style={styles.modalTitle}>Deletar ocorrência</Text>
@@ -78,9 +110,10 @@ const OcorrenciaCard: React.FC<{
     data: string; 
     viatura: string; 
     equipe: string; 
-    onView: () => void; 
+    onView: () => void; // Mapeia para Visualizar
+    onEdit: () => void; // NOVO: Mapeia para Editar
     onDelete: () => void; 
-}> = ({ tipo, data, viatura, equipe, onView, onDelete }) => (
+}> = ({ tipo, data, viatura, equipe, onView, onEdit, onDelete }) => (
     <View style={styles.cardContainer}>
         <View style={styles.detailsContainer}>
             <Text style={styles.cardTipo}>{tipo}</Text>
@@ -90,14 +123,17 @@ const OcorrenciaCard: React.FC<{
         </View>
         
         <View style={styles.buttonsContainer}>
-            <TouchableOpacity style={[styles.actionButton, styles.editButton]} onPress={onView}>
+            {/* BOTÃO 1: EDITAR (Lápis) - Chama onEdit */}
+            <TouchableOpacity style={[styles.actionButton, styles.editButton]} onPress={onEdit}>
                 <Ionicons name="create-outline" size={20} color={primaryColor} />
             </TouchableOpacity>
             
+            {/* BOTÃO 2: VISUALIZAR (Olho) - Chama onView */}
             <TouchableOpacity style={[styles.actionButton, styles.viewButton]} onPress={onView}>
                 <Ionicons name="eye-outline" size={20} color={primaryColor} />
             </TouchableOpacity>
             
+            {/* BOTÃO 3: DELETAR (X) */}
             <TouchableOpacity style={[styles.actionButton, styles.deleteButton]} onPress={onDelete}>
                 <Ionicons name="close-outline" size={20} color={primaryColor} />
             </TouchableOpacity>
@@ -110,9 +146,10 @@ const OcorrenciaCard: React.FC<{
 export default function OcorrenciasScreen() {
     const [selectedOrder, setSelectedOrder] = useState('Recente');
     const [isModalVisible, setIsModalVisible] = useState(false);
-    const [modalType, setModalType] = useState<'view' | 'delete' | null>(null);
+    // Tipos de modal: view, edit, delete
+    const [modalType, setModalType] = useState<'view' | 'edit' | 'delete' | null>(null);
 
-    const showModal = (type: 'view' | 'delete') => {
+    const showModal = (type: 'view' | 'edit' | 'delete') => {
         setModalType(type);
         setIsModalVisible(true);
     };
@@ -169,7 +206,8 @@ export default function OcorrenciasScreen() {
                         data={ocorrencia.data}
                         viatura={ocorrencia.viatura}
                         equipe={ocorrencia.equipe}
-                        onView={() => showModal('view')}
+                        onView={() => showModal('view')} // OLHO -> VISUALIZAR
+                        onEdit={() => showModal('edit')} // LÁPIS -> EDITAR
                         onDelete={() => showModal('delete')}
                     />
                 ))}
@@ -180,6 +218,7 @@ export default function OcorrenciasScreen() {
             {isModalVisible && (
                 <View style={styles.modalOverlay}>
                     {modalType === 'view' && <ViewOccurrenceModal onClose={closeModal} />}
+                    {modalType === 'edit' && <EditOccurrenceModal onClose={closeModal} />}
                     {modalType === 'delete' && <DeleteOccurrenceModal onClose={closeModal} />}
                 </View>
             )}
@@ -348,15 +387,27 @@ const styles = StyleSheet.create({
     inputGroupHalf: {
         width: '48%',
     },
+    // Estilo para INPUTS EDITÁVEIS
     modalInput: {
         height: 40,
         borderWidth: 1,
-        borderColor: primaryColor,
+        borderColor: primaryColor, // Borda forte para edição
         borderRadius: 8,
         paddingHorizontal: 10,
         fontSize: 14,
         color: '#333',
         backgroundColor: '#FFF',
+    },
+    // NOVO ESTILO: INPUTS APENAS PARA VISUALIZAÇÃO
+    modalInputVisualizar: {
+        height: 40,
+        borderWidth: 1,
+        borderColor: '#E0E0E0', // Borda clara para visualização
+        borderRadius: 8,
+        paddingHorizontal: 10,
+        fontSize: 14,
+        color: '#666', // Cor de texto mais clara
+        backgroundColor: '#F7F7F7', // Fundo levemente cinza
     },
     deleteText: {
         fontSize: 16,

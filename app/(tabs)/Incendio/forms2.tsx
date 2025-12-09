@@ -48,7 +48,7 @@ export default function Forms2Natureza2Incendio() {
 
     const handleAdvance = () => {
         // Navega para a próxima etapa: forms3.tsx
-        router.push('/incendio/forms3'); 
+        router.push('/Incendio/forms3'); 
     };
 
     const handleCancel = () => {

@@ -1,19 +1,19 @@
+import { useFormStore } from '@/src/context/FormStore';
 import { useRouter } from 'expo-router';
 import React from 'react';
-import { SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View, Alert } from 'react-native';
-import { useFormStore } from '@/src/context/FormStore';
+import { Alert, SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 const primaryColor = '#550D08'; 
 const cardBackgroundColor = '#FFFFFF';
 
 const FORMULARIOS = [
     
-    { title: 'Formulário de atendimento', subtitle: 'BÁSICO', color: '#AAAAAA', route: 'FormBasico' },
-    { title: 'Formulário de atendimento', subtitle: 'PRÉ-HOSPITALAR – CVI', color: '#1E90FF', route: '/FormPreHospitalar/forms1', nature: 'Natureza 1' }, 
-    { title: 'Formulário de atendimento', subtitle: 'INCÊNDIO', color: '#FF4500', route: '/incendio/forms1', nature: 'Natureza 2' },
-    { title: 'Formulário de atendimento', subtitle: 'SALVAMENTO', color: '#FF8C00', route: '/salvamento/forms1', nature: 'Natureza 3' },
-    { title: 'Formulário de atendimento', subtitle: 'PRODUTOS PERIGOSOS', color: '#FFD700', route: '/perigosos/forms1', nature: 'Natureza 4' },
-    { title: 'Formulário de atendimento', subtitle: 'PREVENÇÃO', color: '#32CD32', route: '/prevencao/forms1', nature: 'Natureza 5' },
+    { title: 'Formulário de atendimento', subtitle: 'BÁSICO', color: '#b8b7b7ff', route: '/Basico/forms1', nature: 'Natureza 1' },
+    { title: 'Formulário de atendimento', subtitle: 'PRÉ-HOSPITALAR – CVI', color: '#1E90FF', route: '/FormPreHospitalar/forms1', nature: 'Natureza 2' }, 
+    { title: 'Formulário de atendimento', subtitle: 'INCÊNDIO', color: '#FF4500', route: '/incendio/forms1', nature: 'Natureza 3' },
+    { title: 'Formulário de atendimento', subtitle: 'SALVAMENTO', color: '#FF8C00', route: '/salvamento/forms1', nature: 'Natureza 4' },
+    { title: 'Formulário de atendimento', subtitle: 'PRODUTOS PERIGOSOS', color: '#FFD700', route: '/perigosos/forms1', nature: 'Natureza 5' },
+    { title: 'Formulário de atendimento', subtitle: 'PREVENÇÃO', color: '#32CD32', route: '/prevencao/forms1', nature: 'Natureza 6' },
 ];
 
 const FormularioButton: React.FC<{ data: typeof FORMULARIOS[0]; onPress: (route: string) => void }> = ({ data, onPress }) => (
@@ -35,7 +35,6 @@ export default function NovoScreen() {
     const store = useFormStore();
 
     const handleFormSelection = (route: string) => {
-        // A lógica de verificação já está correta, garantindo que a rota comece com '/'
         if (route.startsWith('/')) {
             router.push(route); 
         } else {
@@ -82,6 +81,8 @@ const styles = StyleSheet.create({
         backgroundColor: cardBackgroundColor,
     },
     pageHeader: {
+        flexDirection: 'row',
+        alignItems: 'center',
         paddingHorizontal: 15,
         paddingTop: 10,
         marginBottom: 20,
