@@ -40,7 +40,7 @@ O projeto utiliza uma **Arquitetura Não Monolítica** baseada em serviços para
 
 | Papel | Responsável |
 | :--- | :--- |
-| **Gestor de ProjetosI** | Gabriel Santos |
+| **Gestor de ProjetosI** | Gabriel Gleydson Lima dos Santos |
 | **Design UX/UI** | Ana Carolina da Silva Santos |
 | **Dev Front-End** | Pedro Juan Pereira dos Santos |
 | **Dev Back-End / Banco de Dados** | Muriel Bezerra da Silva |
