@@ -2,6 +2,19 @@
 
 > Projeto Integrador desenvolvido para o Corpo de Bombeiros Militar de Pernambuco (CBMPE) no curso de Análise e Desenvolvimento de Sistemas da Faculdade Senac Pernambuco.
 
+---
+
+## Documentação Técnica
+
+[Link documentação](https://docs.google.com/document/d/1P5--2lpsrc51ZA3FAVUqCeMgkGYcoAKgbD8Dn0n_bEs/edit?usp=drivesdk)
+
+
+## Manual do Usuário
+
+[Link manual](https://docs.google.com/document/d/1HekN01xL-Cl8MKh8yKN-Tb9xmBVEPIvMz6SN7-gAyrU/edit?usp=drivesdk)
+
+---
+
 ##  Sobre o Projeto
 
 O **SIRENE** é uma solução tecnológica desenvolvida para modernizar o processo de registro de ocorrências do CBMPE. O sistema substitui o modelo manual e fragmentado atual por um aplicativo mobile multiplataforma (Android, iOS, PWA) e um painel web administrativo.
